@@ -288,7 +288,7 @@ int Commitment::ProcessCommitMsg(std::unique_ptr<Context> context,
     return message_manager_->AddConsensusMsg(context->signature,
                                              std::move(request));
   }
-  //global_stats_->IncCommit();
+  // global_stats_->IncCommit();
   // Add request to message_manager.
   // If it has received enough same requests(2f+1), message manager will
   // commit the request.

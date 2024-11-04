@@ -170,6 +170,7 @@ void TransactionExecutor::ExecuteMessageOutOfOrder() {
 
 void TransactionExecutor::OnlyExecute(std::unique_ptr<Request> request) {
   // Only Execute the request.
+  LOG(INFO) << " only execute out of order request:" << request->seq();
   BatchUserRequest batch_request;
   if (!batch_request.ParseFromString(request->data())) {
     LOG(ERROR) << "parse data fail";
@@ -199,6 +200,7 @@ void TransactionExecutor::OnlyExecute(std::unique_ptr<Request> request) {
 void TransactionExecutor::Execute(std::unique_ptr<Request> request,
                                   bool need_execute) {
   // Execute the request, then send the response back to the user.
+  LOG(INFO) << " execute request:" << request->seq();
   BatchUserRequest batch_request;
   if (!batch_request.ParseFromString(request->data())) {
     LOG(ERROR) << "parse data fail";

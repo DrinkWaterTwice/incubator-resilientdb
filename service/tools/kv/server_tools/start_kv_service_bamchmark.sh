@@ -16,17 +16,19 @@
 # specific language governing permissions and limitations
 # under the License.
 #
-killall -9 contract_service
+killall -9 kv_server_perfo
 
-SERVER_PATH=./bazel-bin/service/contract/contract_service
+SERVER_PATH=./bazel-bin/benchmark/protocols/pbft/kv_server_performance
 SERVER_CONFIG=service/tools/config/server/server.config
 WORK_PATH=$PWD
 CERT_PATH=${WORK_PATH}/service/tools/data/cert/
 
-bazel build //service/contract:contract_service
+# bazel build //service/kv:kv_service $@
 nohup $SERVER_PATH $SERVER_CONFIG $CERT_PATH/node1.key.pri $CERT_PATH/cert_1.cert > server0.log &
 nohup $SERVER_PATH $SERVER_CONFIG $CERT_PATH/node2.key.pri $CERT_PATH/cert_2.cert > server1.log &
 nohup $SERVER_PATH $SERVER_CONFIG $CERT_PATH/node3.key.pri $CERT_PATH/cert_3.cert > server2.log &
 nohup $SERVER_PATH $SERVER_CONFIG $CERT_PATH/node4.key.pri $CERT_PATH/cert_4.cert > server3.log &
 
-nohup $SERVER_PATH $SERVER_CONFIG $CERT_PATH/node5.key.pri $CERT_PATH/cert_5.cert > client.log &
+nohup $SERVER_PATH $SERVER_CONFIG $CERT_PATH/node56.key.pri $CERT_PATH/cert_56.cert > client.log &
+
+# ./bazel-bin/benchmark/protocols/pbft/kv_service_tools /home/gpt/cbft/incubator-resilientdb/service/tools/config/interface/service.config
