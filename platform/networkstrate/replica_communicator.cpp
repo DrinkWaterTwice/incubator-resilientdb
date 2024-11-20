@@ -25,6 +25,10 @@
 
 #include "platform/proto/broadcast.pb.h"
 
+#include <future>
+#include <chrono>
+#include "replica_communicator.h"
+
 namespace resdb {
 
 ReplicaCommunicator::ReplicaCommunicator(
@@ -236,6 +240,35 @@ void ReplicaCommunicator::BroadCast(const google::protobuf::Message& message) {
   if (ret < 0) {
     LOG(ERROR) << "broadcast request fail:";
   }
+}
+
+
+// 这里假定节点id从1递增
+void ReplicaCommunicator::BroadCastNew(const google::protobuf::Message& message, int64_t from, int64_t* delays) {
+  int index = 0;
+  for (const auto& replica : replicas_) {
+    if (replica.id() == from) {
+      continue;
+    }
+    int64_t delay = delays[index];
+    index++;
+
+    // 使用 std::shared_ptr 管理 message 的生命周期
+    auto message_ptr = std::make_shared<Request>();
+    message_ptr->CopyFrom(message);
+
+    // 使用 std::async 创建一个异步任务
+    std::async(std::launch::async, &ReplicaCommunicator::AsyncSendMessage, this, *message_ptr, replica, delay);
+  }
+}
+
+void ReplicaCommunicator::AsyncSendMessage(const google::protobuf::Message& message,
+                      const ReplicaInfo& replica, int64_t delay) {
+  // 延迟执行
+  std::this_thread::sleep_for(std::chrono::milliseconds(delay));
+
+  // 执行发送操作
+  SendMessage(message, replica);
 }
 
 void ReplicaCommunicator::SendMessage(const google::protobuf::Message& message,

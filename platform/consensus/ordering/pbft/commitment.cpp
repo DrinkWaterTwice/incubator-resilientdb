@@ -229,6 +229,8 @@ int Commitment::ProcessProposeMsg(std::unique_ptr<Context> context,
   CollectorResultCode ret =
       message_manager_->AddConsensusMsg(context->signature, std::move(request));
   if (ret == CollectorResultCode::STATE_CHANGED) {
+    // todo 增加一个控制动作
+    
     replica_communicator_->BroadCast(*prepare_request);
   }
   return ret == CollectorResultCode::INVALID ? -2 : 0;
@@ -271,7 +273,9 @@ int Commitment::ProcessPrepareMsg(std::unique_ptr<Context> context,
       //           << commit_request->data_signature().DebugString();
     }
     global_stats_->RecordStateTime("prepare");
-    replica_communicator_->BroadCast(*commit_request);
+    std::vector<int64_t> delays = {50, 50, 50, 50, 50, 50, 50};
+    replica_communicator_->BroadCastNew(*commit_request, config_.GetSelfInfo().id(), delays.data());
+    // replica_communicator_->BroadCast(*commit_request);
   }
   return ret == CollectorResultCode::INVALID ? -2 : 0;
 }

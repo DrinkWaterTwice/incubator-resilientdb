@@ -49,6 +49,8 @@ class ReplicaCommunicator {
                           const ReplicaInfo& replica_info);
 
   virtual void BroadCast(const google::protobuf::Message& message);
+  virtual void BroadCastNew(const google::protobuf::Message& message, int64_t from, int64_t* delays);
+  virtual void AsyncSendMessage(const google::protobuf::Message& message, const ReplicaInfo& replica, int64_t delay);
   virtual void SendMessage(const google::protobuf::Message& message,
                            int64_t node_id);
   virtual int SendBatchMessage(
@@ -76,6 +78,7 @@ class ReplicaCommunicator {
  private:
   std::vector<ReplicaInfo> replicas_;
   SignatureVerifier* verifier_;
+  
   std::map<std::pair<std::string, int>, std::unique_ptr<AsyncReplicaClient>>
       client_pools_;
   std::thread broadcast_thread_;
