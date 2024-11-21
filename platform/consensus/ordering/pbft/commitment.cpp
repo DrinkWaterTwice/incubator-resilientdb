@@ -24,6 +24,8 @@
 
 #include "common/utils/utils.h"
 #include "platform/consensus/ordering/pbft/transaction_utils.h"
+#include "llm/actions_manager.h"
+
 
 namespace resdb {
 
@@ -136,7 +138,7 @@ int Commitment::ProcessNewRequest(std::unique_ptr<Context> context,
     request.set_proxy_id(user_request->proxy_id());
     request.set_ret(-2);
     request.set_hash(user_request->hash());
-
+    // todo leader 发消息的延迟发送还没做
     replica_communicator_->SendMessage(request, request.proxy_id());
     return -2;
   }
@@ -230,8 +232,10 @@ int Commitment::ProcessProposeMsg(std::unique_ptr<Context> context,
       message_manager_->AddConsensusMsg(context->signature, std::move(request));
   if (ret == CollectorResultCode::STATE_CHANGED) {
     // todo 增加一个控制动作
-    
-    replica_communicator_->BroadCast(*prepare_request);
+    controller::ActionProducer act = controller::ActionProducer::GetInstance();
+    std::vector<int64_t> delays = act.getActions(config_.GetSelfInfo().id());
+    replica_communicator_->BroadCastNew(*prepare_request, config_.GetSelfInfo().id(), delays.data());
+    // replica_communicator_->BroadCast(*);
   }
   return ret == CollectorResultCode::INVALID ? -2 : 0;
 }
@@ -273,7 +277,8 @@ int Commitment::ProcessPrepareMsg(std::unique_ptr<Context> context,
       //           << commit_request->data_signature().DebugString();
     }
     global_stats_->RecordStateTime("prepare");
-    std::vector<int64_t> delays = {50, 50, 50, 50, 50, 50, 50};
+    controller::ActionProducer act = controller::ActionProducer::GetInstance();
+    std::vector<int64_t> delays = act.getActions(config_.GetSelfInfo().id());
     replica_communicator_->BroadCastNew(*commit_request, config_.GetSelfInfo().id(), delays.data());
     // replica_communicator_->BroadCast(*commit_request);
   }

@@ -24,6 +24,7 @@ WORK_PATH=$PWD
 CERT_PATH=${WORK_PATH}/service/tools/data/cert/
 
 # bazel build //benchmark/protocols/pbft:kv_server_performance
+# bazel build //benchmark/protocols/pbft:kv_service_tools
 nohup $SERVER_PATH $SERVER_CONFIG $CERT_PATH/node1.key.pri $CERT_PATH/cert_1.cert > server0.log &
 nohup $SERVER_PATH $SERVER_CONFIG $CERT_PATH/node2.key.pri $CERT_PATH/cert_2.cert > server1.log &
 nohup $SERVER_PATH $SERVER_CONFIG $CERT_PATH/node3.key.pri $CERT_PATH/cert_3.cert > server2.log &
@@ -32,3 +33,5 @@ nohup $SERVER_PATH $SERVER_CONFIG $CERT_PATH/node4.key.pri $CERT_PATH/cert_4.cer
 nohup $SERVER_PATH $SERVER_CONFIG $CERT_PATH/node56.key.pri $CERT_PATH/cert_56.cert > client.log &
 
 # ./bazel-bin/benchmark/protocols/pbft/kv_service_tools /home/gpt/cbft/incubator-resilientdb/service/tools/config/interface/service.config
+
+# killall -9 kv_server_perfo

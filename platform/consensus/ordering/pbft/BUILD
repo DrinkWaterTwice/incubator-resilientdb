@@ -111,7 +111,9 @@ cc_library(
         "//platform/networkstrate:replica_communicator",
         "//platform/proto:resdb_cc_proto",
         "//platform/statistic:stats",
+        "//llm:actions_manager"
     ],
+    visibility = ["//llm:__subpackages__"]
 )
 
 cc_test(
@@ -124,6 +126,7 @@ cc_test(
         "//interface/rdbc:mock_net_channel",
         "//platform/config:resdb_config_utils",
         "//platform/networkstrate:mock_replica_communicator",
+        "//llm:actions_manager"
     ],
 )
 

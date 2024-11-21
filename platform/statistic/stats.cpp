@@ -278,7 +278,9 @@ void Stats::SendSummary() {
   consensus_history_[std::to_string(transaction_summary_.txn_number)] =
       summary_json_;
 
-  LOG(ERROR) << summary_json_.dump();
+
+   
+  // LOG(ERROR) << summary_json_.dump();
 
   // Reset Transaction Summary Parameters
   transaction_summary_.request_pre_prepare_state_time =
